@@ -1,0 +1,19 @@
+{
+  "name": "blans-serialized-websockets-chat",
+  "version": "1.0.0",
+  "description": "A simple websockets chat application where data is sent using serialized byte arrays",
+  "main": "./server/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Avix101/Serialized-Websockets-Chat.git"
+  },
+  "author": "Stasha Blank",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Avix101/Serialized-Websockets-Chat/issues"
+  },
+  "homepage": "https://github.com/Avix101/Serialized-Websockets-Chat#readme"
+}
