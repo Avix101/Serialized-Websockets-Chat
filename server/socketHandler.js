@@ -1,4 +1,5 @@
 const users = {};
+const userNameRef = {};
 const room = 'global-room';
 
 let io;
@@ -16,8 +17,13 @@ const convertToServerMessage = (message) => {
   return finalBuffer;
 };
 
-const convertToChatMessage = (user, message) => {
-  const code = 1;
+const convertToChatMessage = (user, message, privateFlag) => {
+  let code = 1;
+
+  if (privateFlag === true) {
+    code = 2;
+  }
+
   const userBuffer = Buffer.from(user, 'utf-8');
   const userLength = userBuffer.byteLength;
 
@@ -56,6 +62,7 @@ const init = (ioInstance) => {
           }
 
           socket.name = user;
+          userNameRef[user] = socket;
           users[socket.id] = socket;
 
           socket.join(room);
@@ -72,21 +79,74 @@ const init = (ioInstance) => {
           const length = buffer.readInt16BE(1);
           let userMessage = '';
 
-          console.log(length);
-
           for (let i = 0; i < length; i++) {
             userMessage += `${String.fromCharCode(buffer.readInt8(i + 3))}`;
           }
-
-          console.log('decoded');
 
           const chatRoomMessage = convertToChatMessage(
             socket.name,
             userMessage,
           );
 
-          console.log('sent');
           io.sockets.in(room).emit('message', chatRoomMessage);
+          break;
+        }
+        case 2: {
+          const timeMessage = convertToServerMessage(`The current server time is: ${new Date().toLocaleTimeString()}`);
+          socket.emit('message', timeMessage);
+          break;
+        }
+        case 3: {
+          const length = buffer.readInt16BE(1);
+          let userMessage = '';
+
+          for (let i = 0; i < length; i++) {
+            userMessage += `${String.fromCharCode(buffer.readInt8(i + 3))}`;
+          }
+
+          const prepend = "×,.·´¨'°÷·..§";
+          const append = "§.·´¨'°÷·..×";
+
+          const chatRoomMessage = convertToChatMessage(
+            socket.name,
+            `${prepend}${userMessage.toUpperCase()}${append}`,
+          );
+
+          io.sockets.in(room).emit('message', chatRoomMessage);
+          break;
+        }
+        case 4: {
+          const userLength = buffer.readInt16BE(1);
+          let user = '';
+
+          for (let i = 0; i < userLength; i++) {
+            user += `${String.fromCharCode(buffer.readInt8(i + 3))}`;
+          }
+
+          const messageLength = buffer.readInt16BE(userLength + 3);
+          let message = '';
+
+          for (let i = 0; i < messageLength; i++) {
+            message += `${String.fromCharCode(buffer.readInt8(i + 5 + userLength))}`;
+          }
+
+          if (userNameRef[user]) {
+            const privateMessage = convertToChatMessage(
+              socket.name,
+              message,
+              true,
+            );
+
+            const successMessage = convertToServerMessage(`PM successfully sent to ${user}`);
+
+            userNameRef[user].emit('message', privateMessage);
+            socket.emit('message', successMessage);
+          } else {
+            const failureMessage = convertToServerMessage('PM not sent- user not found');
+
+            socket.emit('message', failureMessage);
+          }
+
           break;
         }
 
@@ -94,6 +154,10 @@ const init = (ioInstance) => {
           break;
         }
       }
+    });
+
+    socket.on('disconnect', () => {
+      delete users[socket.id];
     });
   });
 };
