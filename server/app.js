@@ -5,7 +5,7 @@ const socketLib = require('socket.io');
 const socketHandler = require('./socketHandler.js');
 const router = require('./router.js');
 
-const port = process.env.port || process.env.NODE_PORT || 3000;
+const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const app = express();
 
