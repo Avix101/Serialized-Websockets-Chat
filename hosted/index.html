@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Serialized Chat</title>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/assets/bundle.js"></script>
+</head>
+
+<body>
+  <p>
+    <label for="username">Username:</label>
+    <input id="username" name="username" type="text" />
+    <input id="connect" type="button" value="Connect" />
+  </p>
+  <p>
+    <label for="message">Message:</label>
+    <input id="message" name="message" type="text" />
+    <input id="send" type="button" value="Send" />
+  </p>
+  <textarea id="chatWindow" rows="20" cols="40" readonly></textarea>
+</body>
+</html>

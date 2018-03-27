@@ -4,7 +4,12 @@
   "description": "A simple websockets chat application where data is sent using serialized byte arrays",
   "main": "./server/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel ./client --out-file ./hosted/bundle.js",
+    "watch": "babel --watch ./client --out-file ./hosted/bundle.js",
+    "nodemon": "nodemon --watch ./server ./server/app.js",
+    "start": "node ./server/app.js",
+    "pretest": "eslint ./server --fix",
+    "test": "echo \"Tests complete\""
   },
   "repository": {
     "type": "git",
@@ -15,5 +20,17 @@
   "bugs": {
     "url": "https://github.com/Avix101/Serialized-Websockets-Chat/issues"
   },
-  "homepage": "https://github.com/Avix101/Serialized-Websockets-Chat#readme"
+  "homepage": "https://github.com/Avix101/Serialized-Websockets-Chat#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "nodemon": "^1.17.2"
+  }
 }
